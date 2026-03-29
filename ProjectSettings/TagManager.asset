@@ -5,15 +5,17 @@ TagManager:
   serializedVersion: 2
   tags:
   - Monster
+  - Door
+  - Item
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
   - Ground
-  - Weapon
+  - CanInteract
   - PickedWeapon
   - CharacterPreview
   - 

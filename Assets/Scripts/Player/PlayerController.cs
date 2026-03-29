@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Camera _playerCamera;
     [SerializeField] private Transform weaponSocket;
     [SerializeField] private GameObject packagePanel;
+    [SerializeField] private GameObject dialogPanel;
 
     [SerializeField] private float runAcceleration = 0.15f;
     [SerializeField] private float runSpeed = 3f;
@@ -38,7 +39,7 @@ public class PlayerController : MonoBehaviour
     private PlayerLocomotionInput _playerLocomotionInput;
     private Animator _animator;
     private float moveSpeedMax;
-    private Vector2 _cameraRotation = Vector2.zero;
+    private Vector2 _cameraRotation /*= Vector2.zero*/;
     private Vector3 _velocity = Vector3.zero;
     private Vector3 horizontalVelocity;
     private float smoothVelocity = 0.25f;
@@ -49,6 +50,7 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded2;
     private float groundedTime;
     private IInteractable targetObject;
+    private Vector3 currentEuler;
 
 
     private void Awake()
@@ -63,16 +65,20 @@ public class PlayerController : MonoBehaviour
         _animator.SetBool("isArmed", false);
         canMove = true;
         packagePanel.SetActive(false);
+        currentEuler = _playerCamera.transform.rotation.eulerAngles;
+
+        _cameraRotation.x = currentEuler.y;
+        _cameraRotation.y = currentEuler.x;
     }
 
     private void Update()
     {
         OpenPackage();
 
-        if (packagePanel.activeSelf)
-        {
-            return;
-        }
+        //if (packagePanel.activeSelf)
+        //{
+        //    return;
+        //}
         Interaction();
         Attack();
         
@@ -113,10 +119,11 @@ public class PlayerController : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (packagePanel.activeSelf)
+        if (packagePanel.activeSelf || dialogPanel.activeSelf)
         {
             return;
         }
+
         //摄像机的转向，角色不转
         _cameraRotation.x += lookSenseH * _playerLocomotionInput.LookInput.x;
         _cameraRotation.y = Mathf.Clamp(_cameraRotation.y - lookSenseV * _playerLocomotionInput.LookInput.y, -lookLimitV, lookLimitV);
@@ -248,6 +255,7 @@ public class PlayerController : MonoBehaviour
                 targetObject = hit.collider.GetComponent<IInteractable>();
                 if(targetObject != null)
                 {
+                    Debug.Log("已经交互");
                     targetObject.OnInteract(gameObject);
                     _playerLocomotionInput.InteractPressed = false;
                 }
@@ -284,7 +292,7 @@ public class PlayerController : MonoBehaviour
 
     private void Attack()
     {
-        if(weaponSocket.childCount != 0 && _playerLocomotionInput.AttackPressed  && packagePanel.activeSelf)
+        if(weaponSocket.childCount != 0 && _playerLocomotionInput.AttackPressed  && !packagePanel.activeSelf)
         {
             Debug.Log("玩家正在攻击");
             _animator.SetTrigger("isAttack");
