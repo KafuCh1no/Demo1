@@ -20,3 +20,17 @@ MonoBehaviour:
     details: "\u4E00\u628A\u6734\u5B9E\u65E0\u534E\u7684\u780D\u5200"
     prefabs: {fileID: 9154157587310391451, guid: 428339e05f129fe4d80727d1d9b77989,
       type: 3}
+  - id: 2
+    name: "\u82F9\u679C"
+    type: food
+    image: {fileID: 21300000, guid: 44851b2a1aabb224cbf41eca274156e1, type: 3}
+    details: "\u53EF\u4EE5\u5403\u7684\u82F9\u679C"
+    prefabs: {fileID: 9073652558180681530, guid: f0eb9a6fabd05ef44a25c171774d409b,
+      type: 3}
+  - id: 3
+    name: "\u70E4\u8089"
+    type: food
+    image: {fileID: 21300000, guid: 25633abe4cf8ffc43bf31494fd66ee25, type: 3}
+    details: "\u719F\u8089\uFF0C\u9971\u8179\u611F\u6781\u5F3A"
+    prefabs: {fileID: 7057711890766018434, guid: fa2517d4b34c592408a9a0284e0ec86b,
+      type: 3}

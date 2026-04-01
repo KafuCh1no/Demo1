@@ -22,11 +22,14 @@ public class PackageLocalData
         {
             if (_instance == null)
             {
-                _instance = Load();
+                _instance = Load(_savePath);
             }
             return _instance;
         }
     }
+
+    public List<PackageLocalItem> _items = new List<PackageLocalItem>();
+    public List<PackageLocalItem> items => _items;
 
     private PackageLocalItem targetItem;
     public string headSlot;
@@ -39,17 +42,17 @@ public class PackageLocalData
 
     public System.Action OnDataChanged;
 
-    public List<PackageLocalItem> items = new List<PackageLocalItem>();
+    public List<PackageLocalItem> chestItems = new List<PackageLocalItem>();
 
-    private static string SavePath => Application.persistentDataPath + "/inventory.json";
+    private static string _savePath => Application.persistentDataPath + "/inventory.json";
 
-    public void Save()
+    public void Save(string savePath)
     {
         try
         {
             string json = JsonUtility.ToJson(this, true);
-            File.WriteAllText(SavePath, json);
-            Debug.Log("存档成功: " + SavePath);
+            File.WriteAllText(savePath, json);
+            Debug.Log("存档成功: " + savePath);
         }
         catch (Exception e)
         {
@@ -57,11 +60,11 @@ public class PackageLocalData
         }
     }
 
-    private static PackageLocalData Load()
+    private static PackageLocalData Load(string savePath)
     {
-        if (File.Exists(SavePath))
+        if (File.Exists(savePath))
         {
-            string json = File.ReadAllText(SavePath);
+            string json = File.ReadAllText(savePath);
             return JsonUtility.FromJson<PackageLocalData>(json);
         }
         return new PackageLocalData();
@@ -84,7 +87,7 @@ public class PackageLocalData
         if (targetItem != null)
         {
             items.Remove(targetItem);
-            Save();
+            Save(_savePath);
             
             Debug.Log($"物品 {uid} 已从数据中移除");
             OnDataChanged?.Invoke();
@@ -109,7 +112,7 @@ public class PackageLocalData
             weaponRightSlot = uid;
         }
 
-        Save();
+        Save(_savePath);
         OnDataChanged?.Invoke();
 
     }

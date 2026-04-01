@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class BasePanel : MonoBehaviour
 {
+
     public GameObject slotPrefab;
     public Transform contentParent;
     public PackageTable configTable;
@@ -13,9 +14,12 @@ public class BasePanel : MonoBehaviour
     private int _minSlots = 44;
     private int _columns = 5;
 
+    public IItemContainer targetContainer;
+
+
+
     private void Awake()
     {
-
         AdjustSlotCount(_minSlots);
     }
 
@@ -33,6 +37,7 @@ public class BasePanel : MonoBehaviour
     public void RefreshUI()
     {
         var savedItems = PackageLocalData.Instance.items;
+            
         int itemCount = savedItems.Count;
 
         int targetTotal;
@@ -42,7 +47,6 @@ public class BasePanel : MonoBehaviour
         }
         else
         {
-
             int remainder = itemCount % _columns;
             targetTotal = (remainder == 0) ? itemCount : itemCount + (_columns - remainder);
         }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEditor.Progress;
 
-public class WeaponPick : MonoBehaviour, IInteractable
+public class ItemPick : MonoBehaviour, IInteractable
 {
-    [SerializeField] private Transform playerHand;
+    private static string _savePath => Application.persistentDataPath + "/inventory.json";
     public int itemId = 1;
     void IInteractable.OnHoverEnter()
     {
@@ -32,7 +32,7 @@ public class WeaponPick : MonoBehaviour, IInteractable
             isNew = true
         });
 
-        PackageLocalData.Instance.Save();
+        PackageLocalData.Instance.Save(_savePath);
 
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.Euler(5f, -90f, -75f);

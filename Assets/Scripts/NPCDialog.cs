@@ -19,7 +19,7 @@ public class NPCDialog : MonoBehaviour, IInteractable
 
     void IInteractable.OnInteract(GameObject interactor)
     { 
-        DialogManager.Instance.UpdateDialog(_textAsset);
+        DialogManager.Instance.UpdateDialog(_textAsset, this.transform);
     }
 
 }

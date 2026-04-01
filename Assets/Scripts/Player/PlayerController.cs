@@ -18,13 +18,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float runSpeed = 3f;
     [SerializeField] private float sprintSpeed = 5f;
     [SerializeField] private float drag = 0.1f;
-    [SerializeField] private float gravity = 9.81f;
+    [SerializeField] private float gravity = 10f;
     [SerializeField] private float jumpHeight = 1.5f;
-    [SerializeField] private float groundedBuffer = 0.05f;
-    
+    [SerializeField] private float capsuleRadius = 0.3f;
+
     //[SerializeField] private GameObject TrailGroup;
 
     public LayerMask rayLayer;
+    public LayerMask groundLayer;
 
     [Header("Camera")]
     public float lookSenseH = 0.1f;
@@ -46,9 +47,7 @@ public class PlayerController : MonoBehaviour
     private float falltimeMax = 0f;
     private float fallTimer = 0f;
     private bool isGrounded = true;
-    private bool isGrounded1;
-    private bool isGrounded2;
-    private float groundedTime;
+
     private IInteractable targetObject;
     private Vector3 currentEuler;
 
@@ -69,16 +68,29 @@ public class PlayerController : MonoBehaviour
 
         _cameraRotation.x = currentEuler.y;
         _cameraRotation.y = currentEuler.x;
+        _animator.SetBool("isTalking", false);
     }
 
     private void Update()
     {
-        OpenPackage();
+        if (dialogPanel.activeSelf)
+        {
+            _animator.SetBool("isTalking", true);
+            _animator.SetFloat("inputX", 0);
+        }
+        else
+        {
+            _animator.SetBool("isTalking", false);
+        }
 
-        //if (packagePanel.activeSelf)
-        //{
-        //    return;
-        //}
+            OpenPackage();
+
+        if (packagePanel.activeSelf || dialogPanel.activeSelf)
+        {
+            _velocity.x = 0;
+            _velocity.z = 0;
+            return;
+        }
         Interaction();
         Attack();
         
@@ -202,8 +214,6 @@ public class PlayerController : MonoBehaviour
         {
             _velocity.y = Mathf.Sqrt(jumpHeight * 2f * gravity);
 
-            groundedTime = -groundedBuffer;
-
             fallTimer = _velocity.y / gravity;
             _animator.SetTrigger("isJumping");
         }
@@ -216,28 +226,12 @@ public class PlayerController : MonoBehaviour
 
     private void HandleGrounded()
     {
+        RaycastHit groundHit;
+        Vector3 point1 = transform.position + Vector3.up * (capsuleRadius);
+        Vector3 point2 = transform.position + Vector3.up * (2 - capsuleRadius);
+        isGrounded = Physics.SphereCast(point1, capsuleRadius, Vector3.down,out groundHit, 0.1f, groundLayer);
 
-        isGrounded1 = _characterController.isGrounded;
 
-        if (Physics.Raycast(transform.position, Vector3.down, 0.2f))
-        {
-            isGrounded2 = true;
-        }
-        else
-        {
-            isGrounded2 = false;
-        }
-
-        if (isGrounded1 || isGrounded2)
-        {
-            groundedTime = groundedBuffer;
-        }
-        else
-        {
-            groundedTime -= Time.deltaTime;
-        }
-
-        isGrounded = groundedTime > 0f;
     }
 
     private void Interaction()
@@ -300,8 +294,8 @@ public class PlayerController : MonoBehaviour
             // 更新攻击和受击不可移动功能
             _velocity = Vector3.zero;
             canMove = false;
-            weaponCollider.enabled = true;
-            weaponCollider.isTrigger = true;
+            //weaponCollider.enabled = true;
+            //weaponCollider.isTrigger = true;
             
         }
         
@@ -334,6 +328,8 @@ public class PlayerController : MonoBehaviour
             
         }
     }
+
+
 
 
 }
